@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "480585111926",
+    "firebase_url": "https://big-hackathon-1338b.firebaseio.com",
+    "project_id": "big-hackathon-1338b",
+    "storage_bucket": "big-hackathon-1338b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:480585111926:android:70657863528951e7",
+        "android_client_info": {
+          "package_name": "com.perfect108.bighackathon"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "480585111926-qln807b0ub65v58d51jiai2tqcf50vcs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA7hHL9sCTsO4MfYJ-BLrOqe31nTinL1GY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
