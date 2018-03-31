@@ -1,14 +1,17 @@
 package com.pcs.hackathonandroid.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.pcs.hackathonandroid.R;
+import com.pcs.hackathonandroid.activities.LiveActivity;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,6 +32,8 @@ public class HomeFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+    private View inflatedView = null;
+    private Button goliveBtn;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -65,7 +70,20 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false);
+
+        this.inflatedView = inflater.inflate(R.layout.fragment_home, container, false);
+
+        goliveBtn = (Button)inflatedView.findViewById(R.id.go_live_btn);
+        goliveBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getContext(), LiveActivity.class);
+                startActivity(i);
+            }
+        });
+
+        return inflatedView;
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event
