@@ -11,7 +11,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.pcs.hackathonandroid.R;
-import com.pcs.hackathonandroid.activities.LiveActivity;
+import com.pcs.hackathonandroid.activities.MP4CaptureActivity;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -34,6 +37,9 @@ public class HomeFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
     private View inflatedView = null;
     private Button goliveBtn;
+
+    @BindView(R.id.go_live)
+    Button goLive;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -70,20 +76,15 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_home, container, false);
+        ButterKnife.bind(this, view);
 
-        this.inflatedView = inflater.inflate(R.layout.fragment_home, container, false);
-
-        goliveBtn = (Button)inflatedView.findViewById(R.id.go_live_btn);
-        goliveBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(getContext(), LiveActivity.class);
-                startActivity(i);
-            }
+        goLive.setOnClickListener(view1 -> {
+            Intent intent = new Intent(getContext(), MP4CaptureActivity.class);
+            startActivity(intent);
         });
 
-        return inflatedView;
-
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

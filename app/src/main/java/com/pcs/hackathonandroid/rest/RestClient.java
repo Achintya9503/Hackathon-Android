@@ -1,14 +1,7 @@
 package com.pcs.hackathonandroid.rest;
 
 import android.content.Context;
-import android.util.Log;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Cache;
@@ -17,9 +10,6 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
-
-import static android.icu.lang.UCharacter.LineBreak.SPACE;
-import static android.icu.lang.UProperty.LINE_BREAK;
 
 /**
  * Created by mufaddalgulshan on 31/03/18.
@@ -46,7 +36,7 @@ public class RestClient {
                 .cache(cache)
                 .build();
 
-        retrofit = new Retrofit.Builder()
+        internal = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -61,8 +51,8 @@ public class RestClient {
     }
 
     public <T> T get(Class<T> service) {
-        if (retrofit != null)
-            return retrofit.create(service);
+        if (internal != null)
+            return internal.create(service);
         return null;
     }
 }
