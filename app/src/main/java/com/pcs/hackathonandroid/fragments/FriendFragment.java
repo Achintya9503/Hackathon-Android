@@ -3,7 +3,8 @@ package com.pcs.hackathonandroid.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,7 +14,10 @@ import android.view.ViewGroup;
 import com.pcs.hackathonandroid.R;
 import com.pcs.hackathonandroid.adapters.FriendRecyclerViewAdapter;
 import com.pcs.hackathonandroid.beans.DummyContent;
-import com.pcs.hackathonandroid.beans.DummyContent.DummyItem;
+import com.pcs.hackathonandroid.beans.User;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * A fragment representing a list of Items.
@@ -23,11 +27,14 @@ import com.pcs.hackathonandroid.beans.DummyContent.DummyItem;
  */
 public class FriendFragment extends Fragment {
 
-    // TODO: Customize parameter argument names
-    private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
-    private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
+    private FriendRecyclerViewAdapter adapter;
+
+    @BindView(R.id.list)
+    RecyclerView recyclerView;
+
+    @BindView(R.id.swipe_container)
+    SwipeRefreshLayout mSwipeRefreshLayout;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -36,42 +43,49 @@ public class FriendFragment extends Fragment {
     public FriendFragment() {
     }
 
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
-    public static FriendFragment newInstance(int columnCount) {
-        FriendFragment fragment = new FriendFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-        }
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_friend_list, container, false);
 
+        ButterKnife.bind(this, view);
+
         // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-            }
-            recyclerView.setAdapter(new FriendRecyclerViewAdapter(DummyContent.ITEMS, mListener));
-        }
+        Context context = view.getContext();
+        LinearLayoutManager layoutManager = new LinearLayoutManager(context);
+        adapter = new FriendRecyclerViewAdapter(DummyContent.ITEMS, mListener);
+
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(adapter);
+        recyclerView.addItemDecoration(new DividerItemDecoration(recyclerView.getContext(),
+                layoutManager.getOrientation()));
+
+        // SwipeRefreshLayout
+        mSwipeRefreshLayout.setOnRefreshListener(() -> loadRecyclerViewData());
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary,
+                android.R.color.holo_green_dark,
+                android.R.color.holo_orange_dark,
+                android.R.color.holo_blue_dark);
+
+        /**
+         * Showing Swipe Refresh animation on activity create
+         * As animation won't start on onCreate, post runnable is used
+         */
+        mSwipeRefreshLayout.post(() -> {
+            mSwipeRefreshLayout.setRefreshing(true);
+            // Fetching data from server
+            loadRecyclerViewData();
+        });
+
         return view;
+    }
+
+    private void loadRecyclerViewData() {
+        // Showing refresh animation before making http call
+        mSwipeRefreshLayout.setRefreshing(true);
+        adapter = new FriendRecyclerViewAdapter(DummyContent.ITEMS, mListener);
+        recyclerView.setAdapter(adapter);
+        mSwipeRefreshLayout.setRefreshing(false);
     }
 
 
@@ -104,6 +118,6 @@ public class FriendFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
+        void onListFragmentInteraction(User user);
     }
 }

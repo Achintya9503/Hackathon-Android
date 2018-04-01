@@ -21,7 +21,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.pcs.hackathonandroid.R;
-import com.pcs.hackathonandroid.beans.DummyContent;
+import com.pcs.hackathonandroid.beans.User;
 import com.pcs.hackathonandroid.fragments.FriendFragment;
 import com.pcs.hackathonandroid.fragments.HomeFragment;
 
@@ -50,8 +50,6 @@ public class MainActivity extends AppCompatActivity implements
                 break;
             case R.id.navigation_friends:
                 fragment = new FriendFragment();
-                break;
-            case R.id.navigation_notifications:
                 break;
         }
 
@@ -146,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onListFragmentInteraction(DummyContent.DummyItem item) {
+    public void onListFragmentInteraction(User user) {
         Intent intent = new Intent(this, LiveActivity.class);
         startActivity(intent);
     }

@@ -17,7 +17,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RestClient {
 
-    private static final String BASE_URL = "hackathondb.cbgq2jvb1nef.us-east-2.rds.amazonaws.com/api/";
+    private static final String BASE_URL = "localhost:8090/api/";
     private static Retrofit retrofit;
     private static RestClient instance;
 
@@ -36,7 +36,7 @@ public class RestClient {
                 .cache(cache)
                 .build();
 
-        internal = new Retrofit.Builder()
+        retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -51,8 +51,8 @@ public class RestClient {
     }
 
     public <T> T get(Class<T> service) {
-        if (internal != null)
-            return internal.create(service);
+        if (retrofit != null)
+            return retrofit.create(service);
         return null;
     }
 }

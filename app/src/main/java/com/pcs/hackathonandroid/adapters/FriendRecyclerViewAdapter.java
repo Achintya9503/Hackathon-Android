@@ -7,8 +7,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.pcs.hackathonandroid.R;
+import com.pcs.hackathonandroid.beans.User;
 import com.pcs.hackathonandroid.fragments.FriendFragment.OnListFragmentInteractionListener;
-import com.pcs.hackathonandroid.beans.DummyContent.DummyItem;
 
 import java.util.List;
 
@@ -19,11 +19,11 @@ import java.util.List;
  */
 public class FriendRecyclerViewAdapter extends RecyclerView.Adapter<FriendRecyclerViewAdapter.ViewHolder> {
 
-    private final List<DummyItem> mValues;
+    private final List<User> users;
     private final OnListFragmentInteractionListener mListener;
 
-    public FriendRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
-        mValues = items;
+    public FriendRecyclerViewAdapter(List<User> users, OnListFragmentInteractionListener listener) {
+        this.users = users;
         mListener = listener;
     }
 
@@ -36,40 +36,40 @@ public class FriendRecyclerViewAdapter extends RecyclerView.Adapter<FriendRecycl
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).id);
-        holder.mContentView.setText(mValues.get(position).content);
+        holder.user = users.get(position);
+        holder.nameView.setText(users.get(position).fullName);
+        holder.emailView.setText(users.get(position).email);
 
         holder.mView.setOnClickListener(v -> {
             if (null != mListener) {
                 // Notify the active callbacks interface (the activity, if the
                 // fragment is attached to one) that an item has been selected.
-                mListener.onListFragmentInteraction(holder.mItem);
+                mListener.onListFragmentInteraction(holder.user);
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        return users.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mIdView;
-        public final TextView mContentView;
-        public DummyItem mItem;
+        public final TextView nameView;
+        public final TextView emailView;
+        public User user;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.item_number);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            nameView = view.findViewById(R.id.name);
+            emailView = view.findViewById(R.id.email);
         }
 
         @Override
         public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            return super.toString() + " '" + emailView.getText() + "'";
         }
     }
 }
