@@ -29,7 +29,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity implements
-        HomeFragment.OnFragmentInteractionListener,
         FriendFragment.OnListFragmentInteractionListener {
 
     private FirebaseAuth mAuth;
@@ -147,12 +146,8 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
-
-    }
-
-    @Override
     public void onListFragmentInteraction(DummyContent.DummyItem item) {
-
+        Intent intent = new Intent(this, LiveActivity.class);
+        startActivity(intent);
     }
 }
