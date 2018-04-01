@@ -21,11 +21,15 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.pcs.hackathonandroid.R;
 import com.pcs.hackathonandroid.beans.Response;
+import com.pcs.hackathonandroid.beans.User;
 import com.pcs.hackathonandroid.interfaces.Api;
+import com.pcs.hackathonandroid.rest.RestClient;
 import com.pcs.hackathonandroid.util.SharedPrefUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 public class SignInActivity extends BaseActivity {
 
@@ -49,7 +53,7 @@ public class SignInActivity extends BaseActivity {
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
-//        api = RestClient.getInstance(this).get(Api.class);
+        api = RestClient.getInstance(this).get(Api.class);
 
         // Button listeners
         findViewById(R.id.sign_in_button).setOnClickListener(view -> signIn());
@@ -103,13 +107,7 @@ public class SignInActivity extends BaseActivity {
                         // Sign in success, update UI with the signed-in user's information
                         Log.d(TAG, "signInWithCredential:success");
                         FirebaseUser user = mAuth.getCurrentUser();
-                        //add user to aws server
-//                        api.saveUser(user.getDisplayName(),user.getEmail(),user.getUid())
-//                                .subscribeOn(Schedulers.io())
-//                                .observeOn(AndroidSchedulers.mainThread())
-//                                .doOnSubscribe(disposable -> showProgressDialog())
-//                                .doOnTerminate(() -> hideProgressDialog())
-//                                .subscribe(this::handleResults,this::handleError);
+                        saveUser(new User(user.getEmail(), user.getDisplayName(), user.getUid()));
                         updateUI(user);
                     } else {
                         // If sign in fails, display a message to the user.
@@ -153,6 +151,7 @@ public class SignInActivity extends BaseActivity {
                         }
                     });
 
+            SharedPrefUtil.saveToPrefs(this, "uid", user.getUid());
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra("photo", user.getPhotoUrl());
             intent.putExtra("name", user.getDisplayName());
@@ -166,6 +165,15 @@ public class SignInActivity extends BaseActivity {
 
             findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
         }
+    }
+
+    private void saveUser(User user) {
+        api.saveUser(user)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(disposable -> showProgressDialog())
+                .doOnTerminate(() -> hideProgressDialog())
+                .subscribe(this::handleResults, this::handleError);
     }
 }
 

@@ -21,17 +21,25 @@ package com.pcs.hackathonandroid.activities;
 import android.Manifest;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 
 import com.pcs.hackathonandroid.R;
+import com.pcs.hackathonandroid.beans.Response;
+import com.pcs.hackathonandroid.interfaces.Api;
+import com.pcs.hackathonandroid.rest.RestClient;
+import com.pcs.hackathonandroid.util.SharedPrefUtil;
 import com.wowza.gocoder.sdk.api.logging.WZLog;
 import com.wowza.gocoder.sdk.api.mp4.WZMP4Writer;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 public class MP4CaptureActivity extends CameraActivity {
     private final static String TAG = MP4CaptureActivity.class.getSimpleName();
@@ -136,6 +144,29 @@ public class MP4CaptureActivity extends CameraActivity {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         return new File(mediaStorageDir.getPath() + File.separator +
                 "WOWZA_" + timeStamp + ".mp4");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        setStreaming(false);
+    }
+
+
+    private void setStreaming(boolean isStreaming) {
+        RestClient.getInstance(this).get(Api.class)
+                .streaming(SharedPrefUtil.getFromPrefs(this, "token", ""), isStreaming ? "true" : "false")
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::handleResults, this::handleError);
+    }
+
+    private void handleResults(Response response) {
+        Log.d(TAG, response.status);
+    }
+
+    private void handleError(Throwable throwable) {
+        throwable.printStackTrace();
     }
 }
 

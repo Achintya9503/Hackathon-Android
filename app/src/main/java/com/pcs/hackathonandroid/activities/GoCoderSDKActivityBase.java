@@ -28,11 +28,16 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.view.ContextThemeWrapper;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 
 import com.pcs.hackathonandroid.R;
+import com.pcs.hackathonandroid.beans.Response;
+import com.pcs.hackathonandroid.interfaces.Api;
+import com.pcs.hackathonandroid.rest.RestClient;
 import com.pcs.hackathonandroid.util.GoCoderSDKPrefs;
+import com.pcs.hackathonandroid.util.SharedPrefUtil;
 import com.wowza.gocoder.sdk.api.WowzaGoCoder;
 import com.wowza.gocoder.sdk.api.broadcast.WZBroadcast;
 import com.wowza.gocoder.sdk.api.broadcast.WZBroadcastConfig;
@@ -43,6 +48,9 @@ import com.wowza.gocoder.sdk.api.errors.WZStreamingError;
 import com.wowza.gocoder.sdk.api.logging.WZLog;
 import com.wowza.gocoder.sdk.api.status.WZStatus;
 import com.wowza.gocoder.sdk.api.status.WZStatusCallback;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 public abstract class GoCoderSDKActivityBase extends Activity
         implements WZStatusCallback {
@@ -327,11 +335,31 @@ public abstract class GoCoderSDKActivityBase extends Activity
             configValidationError = mWZBroadcastConfig.validateForBroadcast();
             if (configValidationError == null) {
                 mWZBroadcast.startBroadcast(mWZBroadcastConfig, this);
+                setStreaming(true);
+            } else {
+                setStreaming(false);
             }
         } else {
             WZLog.error(TAG, "startBroadcast() called while another broadcast is active");
         }
         return configValidationError;
+    }
+
+    private void setStreaming(boolean isStreaming) {
+        RestClient.getInstance(this).get(Api.class)
+                .streaming(SharedPrefUtil.getFromPrefs(this, "token", ""),
+                        isStreaming ? "true" : "false")
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::handleResults, this::handleError);
+    }
+
+    private void handleResults(Response response) {
+        Log.d(TAG, response.status);
+    }
+
+    private void handleError(Throwable throwable) {
+        throwable.printStackTrace();
     }
 
     protected synchronized void endBroadcast(boolean appPausing) {

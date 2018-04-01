@@ -12,11 +12,6 @@ import com.pcs.hackathonandroid.fragments.FriendFragment.OnListFragmentInteracti
 
 import java.util.List;
 
-/**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
- */
 public class FriendRecyclerViewAdapter extends RecyclerView.Adapter<FriendRecyclerViewAdapter.ViewHolder> {
 
     private final List<User> users;
@@ -36,17 +31,24 @@ public class FriendRecyclerViewAdapter extends RecyclerView.Adapter<FriendRecycl
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.user = users.get(position);
-        holder.nameView.setText(users.get(position).fullName);
-        holder.emailView.setText(users.get(position).email);
-
-        holder.mView.setOnClickListener(v -> {
-            if (null != mListener) {
-                // Notify the active callbacks interface (the activity, if the
-                // fragment is attached to one) that an item has been selected.
-                mListener.onListFragmentInteraction(holder.user);
-            }
-        });
+        User user = users.get(position);
+        holder.user = user;
+        holder.nameView.setText(user.fullName);
+        holder.emailView.setText(user.email);
+        if (user.isStreaming) {
+            holder.mView.setClickable(true);
+            holder.liveView.setVisibility(View.VISIBLE);
+            holder.mView.setOnClickListener(v -> {
+                if (null != mListener) {
+                    // Notify the active callbacks interface (the activity, if the
+                    // fragment is attached to one) that an item has been selected.
+                    mListener.onListFragmentInteraction(holder.user);
+                }
+            });
+        } else {
+            holder.mView.setClickable(false);
+            holder.liveView.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -58,6 +60,7 @@ public class FriendRecyclerViewAdapter extends RecyclerView.Adapter<FriendRecycl
         public final View mView;
         public final TextView nameView;
         public final TextView emailView;
+        public final TextView liveView;
         public User user;
 
         public ViewHolder(View view) {
@@ -65,6 +68,7 @@ public class FriendRecyclerViewAdapter extends RecyclerView.Adapter<FriendRecycl
             mView = view;
             nameView = view.findViewById(R.id.name);
             emailView = view.findViewById(R.id.email);
+            liveView = view.findViewById(R.id.live);
         }
 
         @Override

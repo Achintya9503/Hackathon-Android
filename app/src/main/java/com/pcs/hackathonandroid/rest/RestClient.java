@@ -17,7 +17,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RestClient {
 
-    private static final String BASE_URL = "localhost:8090/api/";
+    private static final String BASE_URL = "http://192.168.0.155:8080/api/";
     private static Retrofit retrofit;
     private static RestClient instance;
 

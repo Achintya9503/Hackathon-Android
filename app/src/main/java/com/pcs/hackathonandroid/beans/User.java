@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 
 public class User {
 
-    @SerializedName("user_id")
+    @SerializedName("userId")
     @Expose
     public String userId;
     @SerializedName("username")
@@ -14,10 +14,10 @@ public class User {
     @SerializedName("email")
     @Expose
     public String email;
-    @SerializedName("full_name")
+    @SerializedName("fullName")
     @Expose
     public String fullName;
-    @SerializedName("is_streaming")
+    @SerializedName("streaming")
     @Expose
     public Boolean isStreaming;
     @SerializedName("uid")

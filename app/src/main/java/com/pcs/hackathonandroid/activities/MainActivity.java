@@ -20,6 +20,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.pcs.hackathonandroid.R;
 import com.pcs.hackathonandroid.beans.User;
 import com.pcs.hackathonandroid.fragments.FriendFragment;
@@ -90,6 +91,8 @@ public class MainActivity extends AppCompatActivity implements
                 .into(profile);
 
         profile.setOnClickListener(view -> showAccountPopup());
+
+        FirebaseMessaging.getInstance().subscribeToTopic("live_stream_started");
     }
 
     public void showAccountPopup() {

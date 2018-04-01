@@ -8,4 +8,8 @@ public class Response {
     @SerializedName("status")
     @Expose
     public String status;
+
+    @SerializedName("code")
+    @Expose
+    public int code;
 }

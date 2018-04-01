@@ -21,14 +21,19 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.pcs.hackathonandroid.R;
+import com.pcs.hackathonandroid.beans.Response;
+import com.pcs.hackathonandroid.interfaces.Api;
+import com.pcs.hackathonandroid.rest.RestClient;
 import com.pcs.hackathonandroid.ui.MultiStateButton;
 import com.pcs.hackathonandroid.ui.StatusView;
 import com.pcs.hackathonandroid.util.GoCoderSDKPrefs;
+import com.pcs.hackathonandroid.util.SharedPrefUtil;
 import com.wowza.gocoder.sdk.api.WowzaGoCoder;
 import com.wowza.gocoder.sdk.api.devices.WZAudioDevice;
 import com.wowza.gocoder.sdk.api.devices.WZCamera;
@@ -40,6 +45,9 @@ import com.wowza.gocoder.sdk.api.graphics.WZColor;
 import com.wowza.gocoder.sdk.api.status.WZStatus;
 
 import java.util.Arrays;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 abstract public class CameraActivityBase extends GoCoderSDKActivityBase
         implements WZCameraView.PreviewStatusListener {
@@ -61,6 +69,8 @@ abstract public class CameraActivityBase extends GoCoderSDKActivityBase
     private boolean mUIInitialized = false;
 
     private SharedPreferences.OnSharedPreferenceChangeListener mPrefsChangeListener = null;
+
+    private boolean isNotificationSent = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -177,6 +187,10 @@ abstract public class CameraActivityBase extends GoCoderSDKActivityBase
 
                 // Since we have successfully opened up the server connection, store the connection info for auto complete
                 GoCoderSDKPrefs.storeHostConfig(PreferenceManager.getDefaultSharedPreferences(CameraActivityBase.this), mWZBroadcastConfig);
+                if (!isNotificationSent) {
+                    setStreaming(true);
+                    isNotificationSent = true;
+                }
             } else if (goCoderStatus.isIdle()) {
                 // Clear the "keep screen on" flag
                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -193,6 +207,7 @@ abstract public class CameraActivityBase extends GoCoderSDKActivityBase
             if (mStatusView != null) mStatusView.setStatus(goCoderStatus);
             syncUIControlState();
         });
+        setStreaming(false);
     }
 
     /**
@@ -217,6 +232,23 @@ abstract public class CameraActivityBase extends GoCoderSDKActivityBase
         } else {
             endBroadcast();
         }
+    }
+
+    private void setStreaming(boolean isStreaming) {
+        RestClient.getInstance(this).get(Api.class)
+                .streaming(SharedPrefUtil.getFromPrefs(this, "token", ""),
+                        isStreaming ? "true" : "false")
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::handleResults, this::handleError);
+    }
+
+    private void handleResults(Response response) {
+        Log.d(BASE_TAG, response.status);
+    }
+
+    private void handleError(Throwable throwable) {
+        throwable.printStackTrace();
     }
 
 
