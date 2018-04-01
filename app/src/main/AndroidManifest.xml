@@ -49,7 +49,6 @@
         <activity
             android:name=".activities.MainActivity"
             android:label="Home"
-            android:launchMode="singleInstance"
             android:screenOrientation="portrait" />
 
         <activity
