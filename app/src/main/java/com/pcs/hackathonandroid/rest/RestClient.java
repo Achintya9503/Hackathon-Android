@@ -36,7 +36,7 @@ public class RestClient {
                 .cache(cache)
                 .build();
 
-        internal = new Retrofit.Builder()
+        retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -51,8 +51,8 @@ public class RestClient {
     }
 
     public <T> T get(Class<T> service) {
-        if (internal != null)
-            return internal.create(service);
+        if (retrofit != null)
+            return retrofit.create(service);
         return null;
     }
 }
