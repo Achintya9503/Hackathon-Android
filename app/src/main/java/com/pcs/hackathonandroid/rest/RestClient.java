@@ -17,8 +17,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RestClient {
 
-    private static final String BASE_URL = "https://hackathondb.cbgq2jvb1nef.us-east-2.rds.amazonaws.com";
-    private static Retrofit internal;
+    private static final String BASE_URL = "hackathondb.cbgq2jvb1nef.us-east-2.rds.amazonaws.com/api/";
+    private static Retrofit retrofit;
     private static RestClient instance;
 
     public RestClient(Context context) {

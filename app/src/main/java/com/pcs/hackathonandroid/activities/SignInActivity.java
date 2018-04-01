@@ -2,6 +2,7 @@ package com.pcs.hackathonandroid.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.MainThread;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -15,19 +16,29 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.pcs.hackathonandroid.R;
+import com.pcs.hackathonandroid.interfaces.Api;
+import com.pcs.hackathonandroid.model.Register;
+import com.pcs.hackathonandroid.rest.RestClient;
 import com.pcs.hackathonandroid.util.SharedPrefUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Action;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 public class SignInActivity extends BaseActivity {
 
     private static final String TAG = SignInActivity.class.getSimpleName();
     private static final int RC_SIGN_IN = 9001;
+    private Api api;
 
     private FirebaseAuth mAuth;
     private GoogleSignInClient mGoogleSignInClient;
@@ -45,6 +56,7 @@ public class SignInActivity extends BaseActivity {
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
+        api = RestClient.getInstance(this).get(Api.class);
 
         // Button listeners
         findViewById(R.id.sign_in_button).setOnClickListener(view -> signIn());
@@ -93,11 +105,18 @@ public class SignInActivity extends BaseActivity {
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, login -> {
+                .addOnCompleteListener(this, (Task<AuthResult> login) -> {
                     if (login.isSuccessful()) {
                         // Sign in success, update UI with the signed-in user's information
                         Log.d(TAG, "signInWithCredential:success");
                         FirebaseUser user = mAuth.getCurrentUser();
+                        //add user to aws server
+                        api.Register(user.getDisplayName(),user.getEmail(),user.getUid())
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .doOnSubscribe(disposable -> showProgressDialog())
+                                .doOnTerminate(() -> hideProgressDialog())
+                                .subscribe(this::handleResults,this::handleError);
                         updateUI(user);
                     } else {
                         // If sign in fails, display a message to the user.
@@ -109,6 +128,14 @@ public class SignInActivity extends BaseActivity {
 
                     hideProgressDialog();
                 });
+    }
+
+    private void handleError(Throwable throwable) {
+        throwable.printStackTrace();
+    }
+
+    private void handleResults(Register register) {
+        Log.d(TAG,register.getFullName());
     }
 
     private void signIn() {
