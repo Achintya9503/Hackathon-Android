@@ -35,6 +35,8 @@ public class HomeFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+    private View inflatedView = null;
+    private Button goliveBtn;
 
     @BindView(R.id.go_live)
     Button goLive;

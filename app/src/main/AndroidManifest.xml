@@ -79,6 +79,9 @@
             android:label="@string/audio_bluetooth_title"
             android:screenOrientation="fullSensor" />
 
+        <activity
+            android:name=".activities.LiveActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

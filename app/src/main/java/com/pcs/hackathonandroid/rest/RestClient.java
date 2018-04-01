@@ -18,9 +18,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RestClient {
 
     private static final String BASE_URL = "https://hackathondb.cbgq2jvb1nef.us-east-2.rds.amazonaws.com";
-    private static final String WOWZA_BASE_URL = "https://api.cloud.wowza.com";
     private static Retrofit internal;
-    private static Retrofit wowza;
     private static RestClient instance;
 
     public RestClient(Context context) {
@@ -44,13 +42,6 @@ public class RestClient {
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build();
-
-        wowza = new Retrofit.Builder()
-                .baseUrl(WOWZA_BASE_URL)
-                .client(client)
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .build();
     }
 
     public static RestClient getInstance(Context context) {
@@ -59,15 +50,9 @@ public class RestClient {
         return instance;
     }
 
-    public <T> T getInternal(Class<T> service) {
+    public <T> T get(Class<T> service) {
         if (internal != null)
             return internal.create(service);
-        return null;
-    }
-
-    public <T> T getWowza(Class<T> service) {
-        if (wowza != null)
-            return wowza.create(service);
         return null;
     }
 }
