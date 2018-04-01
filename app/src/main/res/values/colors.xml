@@ -7,4 +7,13 @@
     <color name="grey_100">#F5F5F5</color>
     <color name="grey_300">#E0E0E0</color>
     <color name="grey_500">#9E9E9E</color>
+
+    <color name="dataTableRowBackground1">#00ffffff</color>
+    <color name="dataTableRowBackground2">#1affffff</color>
+    <color name="dataTableHeaderBackground">#1a1a1a</color>
+    <color name="dataTableSubHeaderBackground">#da212121</color>
+
+    <color name="controlButtonPressed">#80ff8400</color>
+    <color name="multiStateButtonPressed">#80ff8400</color>
+    <color name="multiStateButtonDisabled">#c1636363</color>
 </resources>

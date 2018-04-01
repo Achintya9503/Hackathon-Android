@@ -28,11 +28,6 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/status"
-            style="@style/ThemeOverlay.MyTextDetail"
-            android:text="Sign in to enjoy live streaming" />
-
-        <TextView
             android:id="@+id/detail"
             style="@style/ThemeOverlay.MyTextDetail"
             tools:text="Firebase User ID: 123456789abc" />

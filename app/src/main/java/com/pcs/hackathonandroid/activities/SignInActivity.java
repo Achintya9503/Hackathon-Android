@@ -32,8 +32,6 @@ public class SignInActivity extends BaseActivity {
     private FirebaseAuth mAuth;
     private GoogleSignInClient mGoogleSignInClient;
 
-    @BindView(R.id.status)
-    TextView mStatusTextView;
     @BindView(R.id.detail)
     TextView mDetailTextView;
     @BindView(R.id.toolbar)
@@ -142,8 +140,9 @@ public class SignInActivity extends BaseActivity {
             intent.putExtra("uid", user.getUid());
             startActivity(intent);
         } else {
-            mStatusTextView.setText(R.string.signed_out);
             mDetailTextView.setText(null);
+
+            SharedPrefUtil.removeFromPrefs(this, "token");
 
             findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
         }

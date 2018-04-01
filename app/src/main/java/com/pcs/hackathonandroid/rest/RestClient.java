@@ -1,14 +1,7 @@
 package com.pcs.hackathonandroid.rest;
 
 import android.content.Context;
-import android.util.Log;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Cache;
@@ -18,17 +11,16 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static android.icu.lang.UCharacter.LineBreak.SPACE;
-import static android.icu.lang.UProperty.LINE_BREAK;
-
 /**
  * Created by mufaddalgulshan on 31/03/18.
  */
 
 public class RestClient {
 
-    private static final String BASE_URL = "hackathondb.cbgq2jvb1nef.us-east-2.rds.amazonaws.com";
-    private static Retrofit retrofit;
+    private static final String BASE_URL = "https://hackathondb.cbgq2jvb1nef.us-east-2.rds.amazonaws.com";
+    private static final String WOWZA_BASE_URL = "https://api.cloud.wowza.com";
+    private static Retrofit internal;
+    private static Retrofit wowza;
     private static RestClient instance;
 
     public RestClient(Context context) {
@@ -46,8 +38,15 @@ public class RestClient {
                 .cache(cache)
                 .build();
 
-        retrofit = new Retrofit.Builder()
+        internal = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
+                .client(client)
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .build();
+
+        wowza = new Retrofit.Builder()
+                .baseUrl(WOWZA_BASE_URL)
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
@@ -60,9 +59,15 @@ public class RestClient {
         return instance;
     }
 
-    public <T> T get(Class<T> service) {
-        if (retrofit != null)
-            return retrofit.create(service);
+    public <T> T getInternal(Class<T> service) {
+        if (internal != null)
+            return internal.create(service);
+        return null;
+    }
+
+    public <T> T getWowza(Class<T> service) {
+        if (wowza != null)
+            return wowza.create(service);
         return null;
     }
 }
