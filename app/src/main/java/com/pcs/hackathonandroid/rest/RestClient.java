@@ -27,7 +27,7 @@ import static android.icu.lang.UProperty.LINE_BREAK;
 
 public class RestClient {
 
-    private static final String BASE_URL = "hackathondb.cbgq2jvb1nef.us-east-2.rds.amazonaws.com";
+    private static final String BASE_URL = "hackathondb.cbgq2jvb1nef.us-east-2.rds.amazonaws.com/api/";
     private static Retrofit retrofit;
     private static RestClient instance;
 
