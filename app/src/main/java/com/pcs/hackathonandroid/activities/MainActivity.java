@@ -151,4 +151,9 @@ public class MainActivity extends AppCompatActivity implements
         Intent intent = new Intent(this, LiveActivity.class);
         startActivity(intent);
     }
+
+    @Override
+    public void onBackPressed() {
+
+    }
 }
